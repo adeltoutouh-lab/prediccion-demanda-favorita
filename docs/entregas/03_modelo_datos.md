@@ -2,11 +2,15 @@
 
 **Alumno:** Adel Toutouh El Bouchti  
 **Proyecto:** Data Science / IA  
-**Idea seleccionada:** Predicción de demanda para Corporación Favorita
+**Idea seleccionada:** Predicción de ventas para Corporación Favorita
 
 ## 1. Resumen de la idea y datos del proyecto
 
-El proyecto busca predecir las ventas diarias de las distintas familias de productos en las tiendas de Corporación Favorita. El problema que se intenta resolver es la dificultad de saber con antelación cuánto se va a vender en cada tienda. Una previsión demasiado baja puede causar falta de productos y una previsión demasiado alta puede generar exceso de inventario. La solución que quiero construir es un modelo de predicción acompañado de un dashboard en Power BI para consultar el histórico, las previsiones y los errores del modelo.
+El proyecto busca predecir las ventas diarias de las distintas familias de productos en las tiendas de Corporación Favorita. El objetivo es estimar cuánto se venderá en una fecha futura para cada combinación de tienda y familia de producto.
+
+El dataset no incluye información de inventario, por lo que las ventas no se pueden interpretar siempre como demanda real. Por ejemplo, una venta baja también podría deberse a que un producto se agotó. Por este motivo, el proyecto se centrará en la predicción de `sales` y en la evaluación del error del modelo, sin intentar convertir directamente la salida en una decisión automática de compra o de stock.
+
+La solución que quiero construir es un modelo de predicción acompañado de un dashboard en Power BI para consultar el histórico, las previsiones y los errores del modelo.
 
 La fuente principal será el dataset **Store Sales - Time Series Forecasting** publicado en Kaggle. Los archivos principales son `train.csv` y `test.csv`. El primero contiene el histórico de ventas y el segundo contiene el periodo de 16 días que se debe predecir. También se utilizarán `stores.csv`, `transactions.csv`, `holidays_events.csv` y `oil.csv`.
 
@@ -228,11 +232,11 @@ Pueden aparecer picos reales por promociones, festivos o eventos. No eliminaré 
 
 ### Ceros en ventas
 
-Una venta igual a cero puede significar que no hubo demanda, que la tienda estaba cerrada o que existió una rotura de stock. Como el dataset no contiene inventario, no será posible diferenciar todos estos casos. Los ceros se conservarán porque son observaciones válidas.
+Una venta igual a cero puede tener varios significados: que no se vendió nada, que la tienda no operó normalmente o que faltó producto. Como el dataset no contiene inventario, no es posible distinguir todos estos casos. Los ceros se conservarán como observaciones del histórico, pero esta limitación se tendrá en cuenta al interpretar los resultados.
 
 ### Datos desactualizados
 
-El histórico termina en 2017. Esto no impide realizar el proyecto académico, pero limita la aplicación de las conclusiones al funcionamiento actual de la empresa.
+El histórico termina en 2017. Esto no impide realizar el proyecto académico, pero significa que el resultado demostrará el proceso de análisis y modelado y no una herramienta preparada para utilizarse hoy en Corporación Favorita.
 
 ### Variables no disponibles en el futuro
 
@@ -263,6 +267,8 @@ Un registro se considerará inválido si no tiene fecha, tienda o familia, si pr
 La parte más clara del modelo es la granularidad. Cada fila representa una fecha, una tienda y una familia de producto. También está clara la relación con `stores.csv`, porque cada tienda tiene un único registro con sus características.
 
 La parte que genera más incertidumbre es el tratamiento de los festivos y de las variables que no se conocen en el futuro. La tabla que probablemente dará más problemas será `holidays_events.csv`, porque hay que decidir a qué tiendas afecta cada evento y evitar que una fecha con varios eventos duplique las ventas. `transactions.csv` también es una limitación porque no tiene información para el horizonte futuro.
+
+Otro riesgo importante es interpretar la variable `sales` como si midiera toda la demanda. Sin información de inventario no se puede comprobar si una venta baja se debe a menor interés de los clientes o a falta de producto. Esta limitación afecta a la interpretación, aunque no impide evaluar si un modelo predice mejor o peor las ventas registradas.
 
 Si no pudiera construir la capa gold completa, simplificaría el modelo utilizando solo ventas, promociones, tienda, familia y variables de calendario. Estas son las variables imprescindibles y están presentes tanto en el histórico como en el periodo futuro. Después añadiría las tablas auxiliares una por una para medir si realmente mejoran el resultado.
 
