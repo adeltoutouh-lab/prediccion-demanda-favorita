@@ -2,21 +2,29 @@
 
 **Alumno:** Adel Toutouh El Bouchti  
 **Proyecto:** Data Science / IA  
-**Idea seleccionada:** Predicción de demanda para Corporación Favorita
+**Idea seleccionada:** Predicción de ventas para Corporación Favorita
 
 ## 1. Idea seleccionada
 
 ### Problema que resuelve
 
-La idea seleccionada consiste en desarrollar un sistema de predicción de demanda aplicado a Corporación Favorita, una empresa real del sector de supermercados y retail. La necesidad que se quiere abordar es estimar las ventas futuras de cada familia de productos en cada tienda. Una previsión poco precisa puede provocar falta de existencias, pérdida de ventas o exceso de inventario. El problema es especialmente relevante en alimentación, donde parte de los productos son perecederos y la demanda puede cambiar por promociones, festivos, estacionalidad o diferencias entre localidades. El valor del proyecto estaría en ofrecer una previsión que sirva como apoyo a la planificación, sin afirmar que el modelo se encuentra implantado actualmente en la empresa.
+La idea seleccionada consiste en desarrollar un sistema de predicción de ventas aplicado a Corporación Favorita, una empresa real del sector de supermercados y retail. El objetivo será estimar las ventas futuras de cada familia de productos en cada tienda utilizando el histórico disponible.
+
+La predicción puede servir como apoyo para la planificación, pero hay una limitación importante: el dataset registra ventas, no demanda real. Si un producto se agota, una cifra baja de ventas puede ocultar que había personas que querían comprarlo. Como no existe información de stock, no voy a utilizar el modelo para decidir automáticamente cuánto inventario comprar ni para calcular roturas de stock reales.
 
 ### Solución planteada
 
-La solución se desarrollará mediante un proceso de Data Science basado en datos históricos públicos de Corporación Favorita. Primero se realizará una limpieza y exploración de las ventas para identificar tendencias, estacionalidad, valores atípicos y diferencias entre tiendas y familias de producto. Después se crearán variables temporales, medias móviles y retardos de ventas, y se incorporará información sobre promociones, transacciones, festivos, características de las tiendas y precio del petróleo. Se comparará un modelo base sencillo con uno o varios modelos de machine learning, utilizando siempre una validación temporal para evitar utilizar información futura durante el entrenamiento.
+La solución se desarrollará mediante un proceso de Data Science basado en datos históricos públicos de Corporación Favorita. Primero se realizará una limpieza y exploración de las ventas para identificar tendencias, estacionalidad, valores atípicos y diferencias entre tiendas y familias de producto. Después se crearán variables temporales, medias móviles y retardos de ventas, y se incorporará información sobre promociones, festivos, características de las tiendas y, si resulta útil, otras variables auxiliares.
+
+Se comparará un modelo base sencillo con uno o varios modelos de machine learning. La validación será temporal, ya que una división aleatoria permitiría mezclar información pasada y futura y daría una evaluación poco realista.
 
 ### MVP del proyecto final
 
-El producto mínimo viable estará formado por un pipeline reproducible en Python, un modelo capaz de generar previsiones para un horizonte de 16 días y un dashboard en Power BI. En el dashboard se podrá seleccionar una tienda y una familia de producto, consultar la evolución histórica, comparar valores reales y previstos, analizar el efecto de promociones y festivos y visualizar métricas de error. El MVP no intentará automatizar la compra de inventario ni calcular un ahorro real para la empresa, porque el dataset no incluye costes, niveles de stock ni márgenes. Su función será demostrar que se puede construir una herramienta de apoyo a la planificación con datos reales y públicos.
+El producto mínimo viable estará formado por un pipeline reproducible en Python, un modelo capaz de generar previsiones para un horizonte de 16 días y un dashboard en Power BI.
+
+En el dashboard se podrá seleccionar una tienda y una familia de producto, consultar la evolución histórica, comparar valores reales y previstos, analizar el efecto de promociones y festivos y visualizar métricas de error.
+
+El MVP no intentará automatizar la compra de inventario ni calcular un ahorro real para la empresa, porque el dataset no incluye costes, niveles de stock ni márgenes. Su función será demostrar una metodología de predicción de ventas con datos reales y públicos. Además, como el histórico termina en 2017, el resultado no se presentará como una herramienta actual para Corporación Favorita.
 
 ## 2. Datos necesarios
 
@@ -28,7 +36,7 @@ La unidad principal de análisis será una combinación de:
 - tienda;
 - familia de producto.
 
-Por tanto, la granularidad será **diaria por tienda y familia de producto**. Esta granularidad permite estudiar la demanda con suficiente detalle sin llegar al nivel de cliente individual. También se utilizarán tablas auxiliares con información diaria por tienda, diaria a nivel nacional y datos estáticos de cada establecimiento.
+Por tanto, la granularidad será **diaria por tienda y familia de producto**. Esta granularidad permite estudiar las ventas con suficiente detalle sin llegar al nivel de cliente individual. También se utilizarán tablas auxiliares con información diaria por tienda, diaria a nivel nacional y datos estáticos de cada establecimiento.
 
 ### 2.2 Variable objetivo
 
@@ -36,7 +44,7 @@ La variable objetivo será:
 
 - `sales`: ventas registradas para una familia de productos, en una tienda y una fecha determinada.
 
-El objetivo del modelo será estimar esta variable para fechas futuras.
+El objetivo del modelo será estimar esta variable para fechas futuras. No se interpretará `sales` como una medida perfecta de la demanda, porque el dataset no permite saber si hubo productos agotados.
 
 ### 2.3 Variables necesarias
 
@@ -48,9 +56,9 @@ El objetivo del modelo será estimar esta variable para fechas futuras.
 | Objetivo | `sales` | Entrenamiento y evaluación del modelo |
 | Promociones | `onpromotion` | Medir el posible efecto de productos promocionados |
 | Características de tienda | `city`, `state`, `type`, `cluster` | Comparar tiendas según localización y tipología |
-| Actividad de tienda | `transactions` | Aproximar el nivel diario de actividad |
+| Actividad de tienda | `transactions` | Analizar el nivel diario de actividad cuando esté disponible |
 | Festivos y eventos | `type`, `locale`, `locale_name`, `description`, `transferred` | Incorporar efectos de calendario |
-| Contexto económico | `dcoilwtico` | Analizar el precio diario del petróleo como variable externa |
+| Contexto económico | `dcoilwtico` | Comprobar si aporta información útil al modelo |
 
 A partir de estas columnas se crearán variables derivadas:
 
@@ -64,7 +72,7 @@ A partir de estas columnas se crearán variables derivadas:
 - tendencia temporal;
 - medias históricas por tienda y familia.
 
-Las variables derivadas se calcularán utilizando únicamente datos anteriores a la fecha que se desea predecir, para evitar fuga de información.
+Las variables derivadas se calcularán utilizando únicamente información anterior a la fecha que se desea predecir, para evitar fuga de información.
 
 ### 2.4 Profundidad histórica
 
@@ -77,11 +85,11 @@ La fuente principal contiene datos diarios desde 2013 hasta agosto de 2017 y un 
 - diferencias entre tiendas;
 - cambios de tendencia.
 
-Aunque el histórico no es reciente, sí es adecuado para un proyecto académico centrado en la metodología de predicción. Esta limitación deberá explicarse y no se presentará el modelo como una herramienta lista para operar con la situación comercial actual de la empresa.
+El histórico no es reciente. Por eso el proyecto se utilizará para demostrar una metodología de modelado y validación, no para afirmar que representa el comportamiento comercial actual de la empresa.
 
 ### 2.5 Volumen aproximado
 
-El conjunto de entrenamiento tiene alrededor de tres millones de filas y combina aproximadamente 54 tiendas con 33 familias de producto. Es un volumen suficientemente grande para que el proyecto tenga sentido y para comparar modelos, pero todavía puede trabajarse en un ordenador personal utilizando tipos de datos optimizados, lectura por bloques o formatos como Parquet.
+El conjunto de entrenamiento tiene alrededor de tres millones de filas y combina aproximadamente 54 tiendas con 33 familias de producto. Es un volumen suficientemente grande para que el proyecto tenga sentido y para comparar modelos, aunque puede requerir algo de cuidado con memoria y tiempos de ejecución.
 
 Para el primer prototipo se podrá trabajar con una selección de tiendas o familias. Una vez comprobado el pipeline, se ampliará el entrenamiento al conjunto completo si los recursos disponibles lo permiten.
 
@@ -97,7 +105,7 @@ Se consideran imprescindibles:
 - características básicas de las tiendas;
 - calendario de festivos y eventos.
 
-Sin la fecha, la tienda, la familia y las ventas no sería posible formular el problema de predicción. Las promociones y los festivos son necesarios para que el modelo no dependa únicamente del histórico de ventas.
+Sin la fecha, la tienda, la familia y las ventas no sería posible formular el problema de predicción. Las promociones y los festivos pueden ayudar a explicar cambios que una serie histórica simple no captura bien.
 
 ### 2.7 Datos deseables, pero no obligatorios
 
@@ -114,7 +122,7 @@ Sería útil disponer también de:
 - información a nivel de producto individual;
 - pedidos realizados a proveedores.
 
-Estos datos permitirían transformar la predicción en una recomendación de inventario y calcular impacto económico. Sin embargo, no están incluidos en la fuente pública principal y no se solicitarán directamente a la empresa. Por este motivo, el alcance se limitará a predecir ventas y analizar el error de previsión.
+Estos datos permitirían estudiar problemas más cercanos a la optimización de inventario y medir impacto económico. Sin embargo, no están incluidos en la fuente pública principal y no se solicitarán directamente a la empresa. Por este motivo, el alcance se limitará a predecir ventas y analizar el error de previsión.
 
 ## 3. Fuentes de datos previstas
 
@@ -130,7 +138,7 @@ Estos datos permitirían transformar la predicción en una recomendación de inv
 - Web corporativa:  
   https://www.corporacionfavorita.com/
 
-La fuente es pública y no requiere contactar con la empresa ni pagar por los datos. Sin embargo, para descargarla es necesario crear una cuenta gratuita de Kaggle y aceptar las condiciones de la competición. Por tanto, es accesible para un proyecto académico, pero su uso sigue estando sujeto a los términos indicados por Kaggle.
+La fuente es pública y no requiere contactar con la empresa ni pagar por los datos. Para descargarla es necesario crear una cuenta gratuita de Kaggle y aceptar las condiciones de la competición.
 
 ### 3.2 Archivos esperados
 
@@ -183,7 +191,7 @@ Por este motivo, no será necesario anonimizar personas. Aun así, se aplicarán
 - mantener los CSV fuera del repositorio mediante `.gitignore`;
 - publicar únicamente código, documentación, resultados agregados y, cuando sea necesario, pequeñas muestras permitidas.
 
-Desde el punto de vista ético, el modelo no tomará decisiones sobre personas ni utilizará variables sensibles. El principal riesgo sería presentar las predicciones como decisiones exactas. Para evitarlo, el dashboard mostrará métricas de error y se describirá el sistema como una herramienta de apoyo, no como un sustituto de la decisión profesional.
+Desde el punto de vista ético, el modelo no tomará decisiones sobre personas ni utilizará variables sensibles. El principal riesgo sería presentar las predicciones como si fueran exactas o como si midieran demanda real. Para evitarlo, el dashboard mostrará métricas de error y el sistema se describirá como una herramienta de apoyo al análisis.
 
 ## 5. Viabilidad inicial del proyecto
 
@@ -193,7 +201,7 @@ La obtención parece viable porque los archivos están publicados en Kaggle y no
 
 ### 5.2 Suficiencia de calidad, granularidad e histórico
 
-La granularidad diaria por tienda y familia de producto es adecuada para un problema de predicción de demanda. El histórico de más de cuatro años permite estudiar patrones semanales y anuales. Además, las tablas auxiliares aportan promociones, festivos, transacciones y características de las tiendas. La principal limitación es la falta de variables de inventario, precios y costes.
+La granularidad diaria por tienda y familia de producto es adecuada para un problema de predicción de ventas. El histórico de más de cuatro años permite estudiar patrones semanales y anuales. Además, las tablas auxiliares aportan promociones, festivos, transacciones y características de las tiendas. La principal limitación es la falta de variables de inventario, precios y costes.
 
 ### 5.3 Desarrollo realista durante el curso
 
@@ -207,7 +215,7 @@ El proyecto es realista si se desarrolla por fases:
 6. generación de predicciones;
 7. dashboard final.
 
-El MVP no dependerá de utilizar redes neuronales ni de construir una aplicación compleja. Un modelo base y un modelo de árboles de gradiente bien evaluados, acompañados de un dashboard funcional, serían suficientes para demostrar el valor del proyecto.
+El MVP no dependerá de utilizar redes neuronales ni de construir una aplicación compleja. Un modelo base y un modelo de árboles de gradiente bien evaluados, acompañados de un dashboard funcional, serían suficientes para demostrar el trabajo realizado.
 
 ### 5.4 Parte más arriesgada
 
