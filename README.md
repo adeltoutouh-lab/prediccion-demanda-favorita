@@ -17,25 +17,23 @@ El repositorio contiene las cuatro primeras entregas del proyecto:
 - `docs/entregas/03_modelo_datos.md`
 - `docs/entregas/04_analisis_modelado.md`
 
-## Estructura
+## Estructura actual
 
 ```text
 .
+|-- .gitignore
 |-- README.md
 |-- data/
-|   |-- raw/
-|   |-- processed/
-|   `-- gold/
-|-- docs/
-|   `-- entregas/
-|       |-- 01_ideas_producto.md
-|       |-- 02_datos_necesarios.md
-|       |-- 03_modelo_datos.md
-|       `-- 04_analisis_modelado.md
-|-- notebooks/
-|-- reports/
-`-- src/
+|   `-- README.md
+`-- docs/
+    `-- entregas/
+        |-- 01_ideas_producto.md
+        |-- 02_datos_necesarios.md
+        |-- 03_modelo_datos.md
+        `-- 04_analisis_modelado.md
 ```
+
+A medida que avance la implementación se irán añadiendo las carpetas de trabajo necesarias, como `notebooks/`, `src/`, `reports/` y las capas `raw`, `processed` y `gold` dentro de `data/`.
 
 ## Fuente de datos
 
@@ -43,7 +41,7 @@ Los datos proceden de la competición **Store Sales - Time Series Forecasting** 
 
 Es necesario disponer de una cuenta gratuita de Kaggle y aceptar las condiciones de la competición para descargar los archivos.
 
-Los archivos originales y los datasets generados no se incluyen en el repositorio. Solo se publican código, documentación, resultados agregados y archivos README de las capas de datos.
+Los archivos originales y los datasets generados no se incluyen en el repositorio. El archivo `.gitignore` evita subir los CSV, Parquet y otros archivos locales de datos.
 
 ## Alcance del MVP
 
