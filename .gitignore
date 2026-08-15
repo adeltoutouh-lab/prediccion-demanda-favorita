@@ -1,0 +1,22 @@
+# Datos descargados o generados
+*.csv
+*.parquet
+*.zip
+
+# Carpetas locales de datos
+data/raw/
+data/processed/
+data/gold/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Sistema
+.DS_Store
+Thumbs.db
