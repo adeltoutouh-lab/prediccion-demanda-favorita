@@ -65,7 +65,7 @@ Compararé ventas y error posterior del modelo por:
 - `cluster`;
 - ciudad o provincia cuando sea útil.
 
-No pretendo construir un modelo separado para cada tienda en el MVP. Estas segmentaciones se utilizarán principalmente para entender heterogeneidad y analizar errores.
+No pretendo construir un modelo separado para cada tienda en el MVP. Estas segmentaciones se utilizarán principalmente para entender diferencias y analizar errores.
 
 ### Promociones y festivos
 
@@ -95,9 +95,9 @@ No voy a comparar muchos algoritmos. Para el MVP prefiero tener un baseline clar
 
 | Alternativa | Tipo | Por qué se plantea | Limitación principal |
 |---|---|---|---|
-| Baseline naive semanal | Regla simple | Predice usando las ventas observadas 7 días antes. Es una referencia fácil de entender y razonable si existe patrón semanal. | No utiliza promociones, festivos ni cambios de tendencia. |
+| Baseline naive semanal | Regla simple | Usa como referencia la venta de 7 días antes. En un horizonte de 16 días deberá respetar la misma restricción temporal que el resto de modelos. | No utiliza promociones, festivos ni cambios de tendencia. |
 | Regresión lineal / Ridge | Modelo interpretable | Permite comprobar cuánto aportan las variables de calendario, promociones y lags con un modelo sencillo. | Puede quedarse corta ante relaciones no lineales. |
-| LightGBM o XGBoost | Árboles de gradient boosting | Puede capturar relaciones no lineales e interacciones entre tienda, familia, calendario, promociones y retardos. | Es menos interpretable y requiere más ajuste y recursos. |
+| LightGBM o XGBoost | Árboles de gradient boosting | Puede captar relaciones no lineales e interacciones entre tienda, familia, calendario, promociones y retardos. | Es menos interpretable y requiere más ajuste y recursos. |
 
 Si el modelo avanzado no mejora de forma consistente al baseline y al modelo sencillo, no se seleccionará solo por ser más complejo.
 
@@ -122,27 +122,38 @@ Para la predicción final se utilizará **`gold_forecast_horizon.parquet`**, con
 |---|---|---|---|
 | `store_nbr` | Identificador de tienda | Categórica | Diferencias entre establecimientos |
 | `family` | Familia de producto | Categórica | Diferencias entre categorías |
-| `onpromotion` | Número de productos en promoción | Numérica | Contexto comercial conocido |
+| `onpromotion` | Número de productos en promoción | Numérica | Variable futura conocida en `test.csv` |
 | `store_type`, `cluster` | Características de tienda | Categórica | Contexto del establecimiento |
 | `year`, `month`, `day_of_week`, `week_of_year` | Variables de calendario | Numérica/categórica | Estacionalidad |
 | `is_weekend` | Fin de semana | Booleana | Patrón semanal |
-| `is_holiday` | Festivo aplicable | Booleana | Efecto de calendario |
+| `is_holiday` | Festivo conocido por calendario | Booleana | Efecto de calendario |
 | `sales_lag_7` | Ventas de hace 7 días | Numérica | Patrón semanal |
 | `sales_lag_14` | Ventas de hace 14 días | Numérica | Memoria temporal |
 | `sales_lag_28` | Ventas de hace 28 días | Numérica | Tendencia reciente |
-| `sales_rolling_mean_7` | Media de los 7 días anteriores | Numérica | Nivel reciente de ventas |
-| `sales_rolling_mean_28` | Media de los 28 días anteriores | Numérica | Tendencia suavizada |
+| `sales_rolling_mean_7` | Media de los 7 valores anteriores disponibles | Numérica | Nivel reciente de ventas |
+| `sales_rolling_mean_28` | Media de los 28 valores anteriores disponibles | Numérica | Tendencia suavizada |
 
-Las variables temporales se calcularán siempre con `shift` antes de la media móvil, de forma que la fila actual no utilice su propio valor de ventas.
+### Cómo se calcularán los lags durante los 16 días
+
+Esta parte requiere una precaución especial. No basta con calcular los lags sobre todo el histórico y después separar validación, porque a partir de determinados días del horizonte se podrían estar utilizando ventas reales de días anteriores del propio bloque de 16 días.
+
+Para evitarlo, la simulación de validación funcionará como la predicción final: al comenzar un horizonte de 16 días se fija una **fecha de corte** y las ventas reales de esos 16 días se consideran desconocidas.
+
+La predicción será **recursiva**. Para los primeros días se utilizará el histórico real anterior a la fecha de corte. Cuando un lag o una media móvil necesite un valor que ya cae dentro de los 16 días futuros, se utilizará la predicción generada previamente por el propio modelo, no la venta real que después usaré para evaluar.
+
+Ejemplo: al predecir el día 8, `sales_lag_7` apuntará al día 1 del horizonte. Como ese valor no se conocería en el momento real de lanzar las 16 previsiones, se utilizará la predicción obtenida para el día 1.
+
+Esto puede hacer que el error se acumule a lo largo del horizonte, pero es una limitación real que interesa medir.
 
 ### Variables que no se usarán directamente
 
-- `transactions` del mismo día: no está disponible para las fechas futuras, por lo que produciría fuga de información si se usa directamente.
-- `sales` actual: es la variable objetivo y nunca puede formar parte de las entradas de esa misma fila.
-- identificadores como `source_id`: se conservarán para trazabilidad, pero no deberían aportar información predictiva.
+- `transactions` del mismo día futuro: no aparece en `test.csv` y no se conocería al lanzar la predicción.
+- `sales` actual: es la variable objetivo.
+- identificadores como `source_id`: se conservan para trazabilidad, pero no deberían aportar información predictiva.
 - información de inventario, costes o margen: no existe en el dataset.
+- precio del petróleo futuro: aunque existe como fuente auxiliar histórica, no voy a asumir que se conoce con antelación para todo el horizonte. Para el MVP prefiero dejarlo fuera del modelo final.
 
-El precio del petróleo se podrá probar como variable adicional, pero no será imprescindible. Si su aportación es mínima, se eliminará para simplificar el modelo.
+Antes de utilizar cualquier variable externa comprobaré que realmente estaría disponible en la fecha de corte. Las promociones del periodo futuro sí se pueden utilizar porque están incluidas en `test.csv`; las variables de calendario y las características de tienda también se conocen de antemano.
 
 ## 5. Datos de salida y forma de consumo
 
@@ -169,14 +180,15 @@ El proceso previsto será el siguiente:
 
 1. Cargar `gold_sales_history.parquet` y comprobar claves, fechas, nulos y tipos.
 2. Ordenar los datos cronológicamente por tienda y familia.
-3. Crear las variables temporales utilizando solo información pasada.
-4. Reservar los periodos de validación y test antes de ajustar modelos.
+3. Separar primero los periodos que se usarán para validar.
+4. Crear las variables temporales del entrenamiento usando únicamente datos anteriores.
 5. Construir el baseline naive semanal.
 6. Entrenar un modelo sencillo, inicialmente Ridge o regresión lineal.
 7. Entrenar un modelo de gradient boosting si el tiempo y los recursos lo permiten.
-8. Comparar los modelos con la misma separación temporal y las mismas métricas.
-9. Analizar errores globales, por periodo, tienda y familia.
-10. Seleccionar el modelo que ofrezca el mejor equilibrio entre error, estabilidad, complejidad y facilidad de integración.
+8. Simular un horizonte completo de 16 días sin consultar las ventas reales de ese bloque.
+9. Comparar los modelos con las mismas restricciones y métricas.
+10. Analizar errores globales, por día del horizonte, tienda y familia.
+11. Seleccionar el modelo con mejor equilibrio entre error, estabilidad, complejidad y facilidad de integración.
 
 ### Preprocesamiento
 
@@ -185,13 +197,14 @@ El proceso previsto será el siguiente:
 - Para Ridge se aplicará codificación de categóricas y, si es necesario, escalado de variables numéricas.
 - Para LightGBM/XGBoost no será necesario escalar las variables numéricas.
 - Los valores extremos de ventas no se eliminarán automáticamente.
-- Se podrá probar `log1p(sales)` únicamente si mejora la estabilidad y después se transforma la predicción de nuevo a la escala original.
+- Se podrá probar `log1p(sales)` únicamente si mejora la estabilidad y después se transformará la predicción de nuevo a la escala original.
 
 ### Regla de selección
 
-No seleccionaré un modelo únicamente porque tenga la menor métrica en una única partición. El modelo final deberá:
+No seleccionaré un modelo únicamente porque tenga la menor métrica en una sola partición. El modelo final deberá:
 
 - superar al baseline en MAE de forma consistente;
+- mantener una mejora razonable a lo largo de los 16 días;
 - no mostrar un deterioro grande entre validaciones temporales;
 - funcionar razonablemente en distintas tiendas y familias;
 - poder reproducirse con el pipeline del proyecto;
@@ -201,29 +214,38 @@ Si dos modelos tienen resultados muy parecidos, se elegirá el más sencillo.
 
 ## 7. Estrategia de validación y evaluación
 
-La validación será **temporal**, nunca aleatoria. Una división aleatoria mezclaría pasado y futuro y podría producir una evaluación demasiado optimista.
+La validación será **temporal**, nunca aleatoria. Además, reproducirá la forma en la que se generarán las 16 predicciones finales.
 
 ### Separación de datos
 
 La primera propuesta será:
 
 - **Train:** histórico anterior al último bloque de 32 días reservado.
-- **Validación:** 16 días inmediatamente anteriores al test final.
-- **Test interno:** los últimos 16 días del histórico con `sales` disponible.
+- **Validación:** primer bloque de 16 días reservados.
+- **Test interno:** últimos 16 días del histórico con `sales` disponible.
 
-Además, si el coste computacional lo permite, realizaré un backtesting sencillo con varios bloques consecutivos de 16 días. Así podré comprobar si la mejora se mantiene en más de un periodo.
+Para cada bloque se fijará una fecha de corte. Desde ese momento se ocultarán las ventas reales de los siguientes 16 días y se generarán las predicciones de manera recursiva. Solo cuando estén generadas las 16 predicciones se compararán con las ventas reales.
 
-El `test.csv` oficial de Kaggle se utilizará después para generar las predicciones finales, pero como no incluye `sales`, no sirve por sí solo para calcular métricas locales.
+Si el coste computacional lo permite, repetiré el mismo proceso con varios bloques anteriores de 16 días como backtesting. Así se podrá comprobar si el resultado depende demasiado de un único periodo.
+
+El `test.csv` oficial de Kaggle se utilizará después para generar las predicciones finales. Como no incluye `sales`, no sirve para calcular métricas locales.
+
+### Mismo criterio para el baseline
+
+El baseline tendrá exactamente la misma restricción. No se le permitirá consultar ventas reales del horizonte que tampoco conocería el modelo.
+
+En el baseline semanal, cuando el valor de hace 7 días quede dentro del propio bloque de predicción, se reutilizará la predicción que el baseline generó para ese día. Así la comparación será más justa.
 
 ### Prevención de data leakage
 
 Para evitar fuga temporal:
 
-- los lags y medias móviles se calcularán solo con fechas anteriores;
+- se separará cada bloque de validación antes de construir las variables de ese horizonte;
+- las ventas reales de los 16 días permanecerán ocultas hasta terminar la predicción;
+- los lags y medias móviles usarán únicamente histórico previo o predicciones anteriores del propio horizonte;
 - el escalado o cualquier transformación aprendida se ajustará solo con train;
-- no se utilizarán transacciones del mismo día futuro;
-- no se calcularán medias globales usando información de validación o test;
-- las particiones respetarán siempre el orden cronológico.
+- no se utilizarán transacciones futuras ni otras variables que no estuvieran disponibles en la fecha de corte;
+- no se calcularán medias globales utilizando validación o test.
 
 ### Métricas
 
@@ -231,39 +253,51 @@ La métrica principal será **MAE (Mean Absolute Error)** porque se interpreta d
 
 Como métrica secundaria usaré **RMSE** para detectar si existen errores grandes que el MAE puede ocultar.
 
+Además del resultado global, revisaré el MAE por **día del horizonte (1 a 16)**. Esto permitirá ver si la predicción recursiva pierde precisión a medida que se aleja de la fecha de corte.
+
 También revisaré MAE por tienda, familia y periodo. No utilizaré MAPE como métrica principal porque hay ventas iguales a cero y eso genera problemas de interpretación y divisiones por cero.
 
 | Elemento | Decisión prevista | Justificación |
 |---|---|---|
-| Separación | Split temporal + backtesting de 16 días si es viable | Se parece al uso real y evita mezclar futuro y pasado |
-| Métrica principal | MAE | Fácil de interpretar y robusta frente a algunos picos |
-| Métrica secundaria | RMSE | Penaliza errores grandes |
-| Baseline | Ventas de hace 7 días | Referencia simple con sentido semanal |
-| Criterio de aceptación | Mejora mínima del 5% en MAE frente al baseline y resultado estable | Evita aceptar mejoras casi irrelevantes |
+| Separación | Split temporal + bloques de 16 días | Reproduce el horizonte real |
+| Generación | Predicción recursiva | Evita usar ventas reales del propio horizonte |
+| Métrica principal | MAE | Fácil de interpretar |
+| Métrica secundaria | RMSE | Ayuda a detectar errores grandes |
+| Baseline | Naive semanal recursivo | Se compara bajo la misma restricción que el modelo |
+| Criterio de aceptación | Mejora mínima inicial del 5% en MAE frente al baseline y resultado estable | Evita aceptar mejoras casi irrelevantes |
 
-El 5% se utilizará como umbral inicial de trabajo. Si al analizar el problema se observa que es demasiado exigente o demasiado bajo, se documentará el cambio y se justificará con los resultados.
+El 5% se utilizará como umbral inicial de trabajo. Si al analizar los resultados se observa que no es un umbral razonable, se documentará cualquier cambio.
 
 ### Análisis de errores
 
 Revisaré:
 
+- error por día del horizonte;
 - días con mayor error absoluto;
 - tiendas y familias con mayor MAE;
 - comportamiento en promociones y festivos;
 - periodos con ventas muy altas o muchos ceros;
 - diferencia entre baseline y modelo mejorado.
 
-Si un modelo tiene una media buena pero falla mucho en determinados segmentos, se reflejará en el dashboard y en las conclusiones.
+Si el error aumenta bastante en los últimos días del horizonte, será una señal de acumulación de error de la estrategia recursiva y se indicará como limitación.
 
 ## 8. Riesgos y alternativas
 
 ### La variable objetivo no representa demanda real
 
-`sales` registra ventas, no demanda insatisfecha. Si hubo una rotura de stock, el dataset no permite saber cuántas unidades se habrían vendido con inventario suficiente. Este es el principal límite conceptual del proyecto. Por eso el resultado se describirá siempre como **predicción de ventas**.
+`sales` registra ventas, no demanda insatisfecha. Si hubo una rotura de stock, el dataset no permite saber cuántas unidades se habrían vendido con inventario suficiente. Por eso el resultado se describirá siempre como **predicción de ventas**.
 
-### Data leakage
+### Data leakage dentro del horizonte
 
-Es uno de los riesgos técnicos más importantes. Puede aparecer al calcular lags, medias móviles, imputaciones o transformaciones utilizando datos futuros. Se reducirá con un pipeline temporal y comprobaciones explícitas.
+Es uno de los riesgos técnicos más importantes. El problema no aparece solo al separar train y test: también puede aparecer dentro de los 16 días si se utilizan como lags las ventas reales de días anteriores del propio horizonte. La simulación recursiva evitará este problema.
+
+### Acumulación de error
+
+Al reutilizar predicciones anteriores para construir lags y medias móviles, un error de los primeros días puede afectar a días posteriores. Por eso se medirá el error por posición dentro del horizonte y no únicamente con una métrica global.
+
+### Variables futuras no conocidas
+
+Solo se utilizarán variables que puedan conocerse en la fecha de corte. `onpromotion` está disponible en el test de Kaggle y las variables de calendario son conocidas. No se utilizarán directamente `transactions` futuras ni se asumirá que se conoce el precio futuro del petróleo.
 
 ### Antigüedad de los datos
 
@@ -273,26 +307,10 @@ El histórico termina en 2017. El proyecto puede demostrar una metodología de f
 
 El histórico tiene alrededor de tres millones de filas. Si el entrenamiento completo es demasiado lento, empezaré con una selección de tiendas o familias para validar el pipeline. Después ampliaré el alcance si los recursos lo permiten.
 
-### Series con muchos ceros y comportamiento desigual
-
-Algunas combinaciones tienda-familia pueden tener ventas muy bajas o muchos ceros. Esto puede hacer que una métrica global oculte diferencias importantes. Por eso revisaré el error por segmentos.
-
-### Variables auxiliares con disponibilidad limitada
-
-`transactions` no está disponible para el horizonte futuro. Si una variable no puede conocerse en el momento real de predicción, no se utilizará directamente aunque mejore artificialmente la métrica.
-
 ### Alternativa si ningún modelo supera el baseline
 
-Si ningún modelo mejora el baseline de forma consistente, mantendré el baseline como resultado principal del MVP y documentaré que la complejidad añadida no aporta mejora suficiente. Después revisaría:
-
-1. calidad de las variables temporales;
-2. longitud de los lags;
-3. tratamiento de promociones y festivos;
-4. segmentación por familias o tiendas;
-5. posible reducción del alcance.
-
-El proyecto seguiría siendo válido porque demostraría mediante una evaluación temporal que un modelo más complejo no siempre mejora una referencia sencilla.
+Si ningún modelo mejora el baseline de forma consistente, mantendré el baseline como resultado principal del MVP y documentaré que la complejidad añadida no aporta mejora suficiente. Después revisaría las variables temporales, el tratamiento de promociones y festivos y el alcance del modelo.
 
 ## Resultado esperado de esta entrega
 
-Con esta estrategia queda definido qué se va a predecir, qué análisis se realizará, qué modelos se compararán, qué datos se utilizarán, cómo se evaluarán los resultados y qué riesgos existen. El siguiente paso será implementar el pipeline, construir el baseline y comprobar con validación temporal si un modelo mejorado aporta una ganancia real.
+Con esta estrategia queda definido qué se va a predecir, qué análisis se realizará, qué modelos se compararán, qué datos se utilizarán y cómo se evitará utilizar información del propio horizonte que no existiría en el momento real de predicción. El siguiente paso será implementar el pipeline y comprobar con bloques completos de 16 días si un modelo mejorado aporta una ganancia real.
