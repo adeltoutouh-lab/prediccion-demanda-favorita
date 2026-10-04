@@ -8,7 +8,7 @@ He desarrollado una previsión diaria por tienda y familia de producto con el da
 
 - [Memoria final en PDF](docs/TFM_Favorita_Adel_Toutouh.pdf) y [versión Markdown](docs/memoria_tfm.md).
 - [Presentación final](docs/TFM_Favorita_presentacion_final.pptx), con seis diapositivas y notas del orador, y [guion de cinco minutos](docs/guion_defensa_5min.md).
-- [Proyecto Power BI](powerbi/Favorita.pbip) e [instrucciones de apertura](powerbi/README.md).
+- [Informe Power BI con los datos guardados — Favorita.pbix](powerbi/Favorita.pbix), [proyecto editable PBIP](powerbi/Favorita.pbip) e [instrucciones](powerbi/README.md).
 - [Notebook de datos y EDA](notebooks/01_datos_y_eda.ipynb) y [notebook de resultados](notebooks/02_modelado_y_resultados.ipynb), ejecutados y con salidas guardadas.
 - [Resultado final y relación con las entregas](docs/entregas/06_resultado_final.md). Las cinco entregas anteriores se conservan como documentación del diseño.
 
@@ -70,9 +70,9 @@ La presentación es un archivo editable independiente. No es necesaria para ejec
 
 ## Power BI
 
-El repositorio incluye un proyecto **PBIP**, el informe PBIR, el modelo semántico y los CSV que consume. Tiene una página de previsión y otra de evaluación, filtros de tienda, familia y modelo, y exportación de previsiones. Se abre `powerbi/Favorita.pbip` en Power BI Desktop para actualizar el modelo.
+Para consultar el resultado, abre **[Favorita.pbix](powerbi/Favorita.pbix)** en Power BI Desktop: contiene el modelo importado y los datos guardados, por lo que no hace falta ejecutar PowerShell ni entrenar para visualizarlo. Se conserva también el proyecto **PBIP**, el informe PBIR, el modelo semántico y los CSV que consume. Tiene una página de previsión y otra de evaluación, filtros de tienda, familia y modelo, y exportación de previsiones. Se abre `powerbi/Favorita.pbip` en Power BI Desktop para actualizar el modelo.
 
-La estructura se ha validado contra los esquemas oficiales de Microsoft y las métricas se han reconciliado con los CSV. **No se ha podido abrir Power BI Desktop en el entorno de ejecución.** Queda comprobar la apertura, el refresco y el comportamiento visual en Windows antes de presentar el dashboard. No se entrega un `.pbix` ni se afirma haber publicado en Power BI Service. Las rutas web están configuradas para este repositorio; existe una opción de lectura local.
+La estructura se ha validado contra los esquemas oficiales de Microsoft y las métricas se han reconciliado con los CSV. El alumno ha abierto el proyecto en Power BI Desktop y ha entregado el PBIX con datos: su captura muestra MAE 75,85 y WAPE 16,2%, coherentes con Python. Se ha comprobado la integridad del archivo, sus dos páginas y la presencia del modelo embebido. La captura no confirma un refresco explícito ni todos los filtros y exportaciones; esas comprobaciones siguen pendientes. Evidencia: [desktop_review.json](outputs/desktop_review.json). Las rutas web están configuradas para este repositorio; existe una opción de lectura local.
 
 ## Organización
 

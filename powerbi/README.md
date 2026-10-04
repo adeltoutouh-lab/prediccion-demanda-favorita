@@ -1,12 +1,16 @@
 # Informe nativo de Power BI
 
+## Abrir la entrega al profesor
+
+Descarga **[Favorita.pbix](Favorita.pbix)** y ábrelo en Power BI Desktop. El archivo contiene el modelo importado y los datos guardados para consultar las dos páginas directamente. No requiere PowerShell ni ejecutar Python. Para volver a obtener los CSV desde la fuente pública utiliza **Actualizar**. El PBIP siguiente es la versión de proyecto para revisar o modificar el informe.
+
 ## Abrir el proyecto
 
 1. Clona o descarga el repositorio completo. Instala una versión reciente de **Power BI Desktop para Windows** compatible con proyectos PBIP e informes PBIR. Si la versión los requiere como funciones de vista previa, activa esas funciones y reinicia Desktop.
 2. Abre `Favorita.pbip` desde esta carpeta. Conserva a su lado `Favorita.Report`, `Favorita.SemanticModel` y `data`.
 3. Pulsa **Actualizar**. El parámetro `DataBaseURL` apunta a los CSV de la rama `main` de este repositorio. Para la fuente web pública selecciona autenticación **Anónima**; el nivel de privacidad aplicable a esos datos públicos es **Público**.
 4. Para trabajar sin acceso a GitHub, en **Transformar datos → Editar parámetros** pon `UseLocalFiles = true` y cambia `LocalDataFolder` por la ruta absoluta de tu carpeta `powerbi/data`, por ejemplo `C:/TFM/prediccion-demanda-favorita/powerbi/data`. Aplica y actualiza. El directorio no debe terminar con `/`.
-5. Comprueba las dos páginas, cambia tienda, familia y modelo, y confirma que las tablas y los gráficos responden. El modelo utilizado por defecto es LightGBM. Si quieres entregar también un `.pbix`, guárdalo desde Desktop una vez actualizado.
+5. Comprueba las dos páginas, cambia tienda, familia y modelo, y confirma que las tablas y los gráficos responden. El modelo utilizado por defecto es LightGBM. El `.pbix` ya está incluido en esta entrega; si modificas el proyecto, guarda una nueva copia desde Desktop.
 
 ## Páginas y recorrido
 
@@ -26,7 +30,7 @@ El formato PBIP permite revisar los cambios del modelo y del informe en Git. `mo
 
 Se han validado los JSON contra los esquemas oficiales de Microsoft, las referencias a columnas y medidas, las claves, las relaciones, el número de predicciones y la igualdad de MAE, RMSE y WAPE con los resultados de Python. Evidencia: [powerbi_validation.json](../outputs/powerbi_validation.json).
 
-**El entorno de ejecución no dispone de Power BI Desktop. La apertura, el refresco, las medidas DAX en Desktop y la interacción visual deben verificarse en Windows antes de la defensa.** No se presenta una captura de Desktop ni se afirma que se haya publicado en Power BI Service.
+La apertura y la visualización de datos han sido observadas mediante una captura de Power BI Desktop aportada por el alumno. Este también ha guardado y entregado el PBIX. La integridad del paquete y la presencia de un modelo de datos embebido están comprobadas; quedan pendientes la confirmación de un refresco explícito, los filtros y la exportación desde la interfaz. La validación automática de `powerbi_validation.json` se ejecuta fuera de Desktop; la revisión manual se registra por separado en `desktop_review.json`.
 
 Para repetir la comprobación estructural:
 
@@ -40,4 +44,4 @@ Sin `--schemas` el validador comprueba datos y referencias, pero no declara habe
 
 ## Apertura observada en el equipo del alumno
 
-El 04/10/2026 el alumno abrió el proyecto y aportó una captura de Power BI Desktop con las dos páginas y los datos cargados. En la página de previsión se observan MAE 75,85, WAPE 16,2% y mejora de MAE 21,4%, coherentes con los resultados de Python. La captura confirma la apertura y la visualización inicial; aún no confirma un refresco explícito, todos los filtros ni la exportación. Se han corregido los textos recortados de las tarjetas. Registro: [desktop_review.json](../outputs/desktop_review.json). Para la entrega cómoda al profesor, guardar un PBIX desde Desktop después de verificar la actualización.
+El 04/10/2026 el alumno abrió el proyecto y aportó una captura de Power BI Desktop con las dos páginas y los datos cargados. En la página de previsión se observan MAE 75,85, WAPE 16,2% y mejora de MAE 21,4%, coherentes con los resultados de Python. La captura confirma la apertura y la visualización inicial; aún no confirma un refresco explícito, todos los filtros ni la exportación. Se han corregido los textos recortados de las tarjetas. Registro: [desktop_review.json](../outputs/desktop_review.json). Se incluye el PBIX guardado por el alumno, sin modificar su contenido. El PBIP contiene los ajustes posteriores de tamaño de las etiquetas.

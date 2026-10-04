@@ -186,7 +186,7 @@ El proyecto powerbi/Favorita.pbip incluye el informe PBIR, el modelo semántico 
 
 El modelo tiene dimensiones de calendario, tienda, familia y modelo, con relaciones de uno a muchos y filtrado en una dirección hacia histórico, predicciones y validación. Las medidas de error eliminan el filtro del calendario del forecast para no confundir fechas futuras con el test interno, pero conservan tienda, familia, modelo y el día del horizonte.
 
-Los archivos y referencias del proyecto se han comprobado con los esquemas JSON oficiales de Microsoft [5]. También se han revisado claves, relaciones y columnas contra los CSV. Este entorno no dispone de Power BI Desktop: la apertura, el refresco y la exportación desde la interfaz requieren esa comprobación final en Windows. No se presenta una imagen generada como si fuera una captura de Desktop.
+Los archivos y referencias del proyecto se han comprobado con los esquemas JSON oficiales de Microsoft [5]. También se han revisado claves, relaciones y columnas contra los CSV. El proyecto se ha abierto en Power BI Desktop y la captura muestra datos y métricas coherentes con Python. Se entrega Favorita.pbix con el modelo y los datos guardados. El paquete es íntegro y contiene las dos páginas. Quedan por confirmar un refresco explícito, todos los filtros y la exportación desde la interfaz. La apertura está registrada en outputs/desktop_review.json.
 
 ![Figura 5. Ventas conocidas y forecast histórico de una combinación concreta. La línea de puntos marca el corte.](figures/07_forecast_example.png)
 
@@ -200,7 +200,7 @@ Las pruebas automáticas comprueban ocho reglas: recursión del baseline, ausenc
 
 Los datos raw, las capas Parquet grandes y los modelos se regeneran y quedan fuera de Git. Se publican las métricas, las previsiones y los CSV compactos necesarios para abrir el dashboard. Los notebooks incluyen salidas ejecutadas y explican el análisis, sin obligar a entrenar de nuevo para ver los resultados.
 
-En Windows puede utilizarse directamente .venv/Scripts/python.exe para evitar depender de la activación de PowerShell. Para abrir el informe, se recomienda Power BI Desktop actualizado, abrir Favorita.pbip y pulsar Actualizar. Las consultas apuntan por defecto a los CSV públicos de este repositorio. La guía de powerbi/README.md explica también la opción local.
+En Windows puede utilizarse directamente .venv/Scripts/python.exe para evitar depender de la activación de PowerShell. Para consultar la entrega, se abre Favorita.pbix en Power BI Desktop con sus datos guardados. El proyecto Favorita.pbip conserva el formato editable; Actualizar vuelve a cargar las fuentes. Las consultas apuntan por defecto a los CSV públicos de este repositorio. La guía de powerbi/README.md explica también la opción local.
 
 ```bash
 python -m venv .venv
@@ -236,7 +236,7 @@ La parte que más ha condicionado la implementación ha sido simular los 16 día
 
 También ha sido necesario revisar el lenguaje del producto. El dashboard presenta una previsión de ventas histórica y permite consultar sus errores. La falta de inventario, unidades homogéneas y datos actuales impide convertir el resultado en una medida de demanda real o en una recomendación automática de compra.
 
-La entrega mantiene los documentos de planificación y añade código, salidas ejecutadas, notebooks, memoria, presentación y un proyecto nativo de Power BI. La metodología y los resultados están comprobados localmente; queda descrita la comprobación de interfaz necesaria al abrir el informe en Desktop.
+La entrega mantiene los documentos de planificación y añade código, salidas ejecutadas, notebooks, memoria, presentación y un proyecto nativo de Power BI. La metodología y los resultados están comprobados localmente. El informe se ha abierto en Desktop y se entrega también como PBIX con datos. Quedan indicadas las comprobaciones de refresco e interacción todavía pendientes.
 
 ## Referencias
 

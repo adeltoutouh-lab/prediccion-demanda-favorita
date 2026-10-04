@@ -11,6 +11,22 @@
   },
   "explicit_refresh_verified": false,
   "filters_and_export_verified": false,
-  "pbix_created": false,
-  "layout_fix": "Se reducen los tamaños de las tarjetas de modelo y estado, se eliminan categorías duplicadas y cabeceras técnicas de los selectores. Pendiente confirmar la nueva maquetación en Desktop."
+  "pbix_created": true,
+  "layout_fix": "Se reducen los tamaños de las tarjetas de modelo y estado, se eliminan categorías duplicadas y cabeceras técnicas de los selectores. Pendiente confirmar la nueva maquetación en Desktop.",
+  "pbix_path": "powerbi/Favorita.pbix",
+  "pbix_bytes": 3771056,
+  "pbix_sha256": "c5a53b23003841e618c2221be6eba271a6a03d39772f5bd9667c22e6abe5eafd",
+  "pbix_crc_valid": true,
+  "pbix_embedded_data_model": true,
+  "pbix_pages": [
+    {
+      "name": "Previsión de ventas",
+      "visuals": 15
+    },
+    {
+      "name": "Validación del modelo",
+      "visuals": 13
+    }
+  ],
+  "pbix_report_layout": "Archivo recibido del alumno; se conserva sin modificar. El PBIP incluye ajustes posteriores de tamaño de etiquetas."
 }

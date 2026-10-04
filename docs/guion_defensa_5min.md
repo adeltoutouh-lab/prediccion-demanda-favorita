@@ -24,7 +24,7 @@ En el test interno, del 31 de julio al 15 de agosto, el MAE del baseline es 96,5
 
 ## 6. Entrega y límites (4:05–5:00)
 
-El resultado final incluye 28.512 previsiones para los 16 días siguientes y un proyecto nativo de Power BI con dos páginas. La primera permite filtrar por tienda, familia y modelo y exportar las previsiones. La segunda muestra los errores del test interno. He comprobado la estructura del informe y que sus CSV reproducen las métricas. Queda verificar la apertura y el refresco en Power BI Desktop. Como siguiente paso ampliaría el backtesting a otros periodos y validaría el dashboard con un usuario. Con datos de inventario también podría estudiar roturas de stock, pero con este dataset el alcance sigue siendo ventas.
+El resultado final incluye 28.512 previsiones para los 16 días siguientes y un proyecto nativo de Power BI con dos páginas. La primera permite filtrar por tienda, familia y modelo y exportar las previsiones. La segunda muestra los errores del test interno. He comprobado la estructura del informe y que sus CSV reproducen las métricas. El proyecto se ha abierto en Power BI Desktop y se entrega también como PBIX con datos. Queda confirmar el refresco explícito y la interacción completa. Como siguiente paso ampliaría el backtesting a otros periodos y validaría el dashboard con un usuario. Con datos de inventario también podría estudiar roturas de stock, pero con este dataset el alcance sigue siendo ventas.
 
 ## Preguntas que conviene preparar
 
@@ -38,6 +38,6 @@ El resultado final incluye 28.512 previsiones para los 16 días siguientes y un 
 
 **¿Qué representan las 28.512 filas?** Son 54 tiendas × 33 familias × 16 días. El submission lleva una previsión por fila del test oficial; en Power BI hay además previsiones de los tres modelos.
 
-**¿Está probado el dashboard en Desktop?** Se han validado el proyecto y sus datos, pero en este entorno no se ha abierto Power BI Desktop. La comprobación final de apertura y refresco está documentada como pendiente.
+**¿Está probado el dashboard en Desktop?** El proyecto se ha abierto en Power BI Desktop y se ha guardado el PBIX. La captura confirma la carga de datos y las métricas; el refresco explícito y la interacción completa siguen pendientes.
 
 **¿Qué ampliaría después?** Evaluaría más cortes en distintas épocas y validaría el flujo con un usuario. Necesitaría datos de stock para convertirlo en una herramienta de inventario.
