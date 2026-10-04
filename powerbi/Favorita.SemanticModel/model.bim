@@ -1,0 +1,718 @@
+{
+  "name": "Favorita",
+  "compatibilityLevel": 1600,
+  "model": {
+    "culture": "es-ES",
+    "sourceQueryCulture": "en-US",
+    "defaultPowerBIDataSourceVersion": "powerBI_V3",
+    "dataAccessOptions": {
+      "legacyRedirects": true,
+      "returnErrorValuesAsNull": true
+    },
+    "tables": [
+      {
+        "name": "Historico",
+        "columns": [
+          {
+            "name": "date",
+            "dataType": "dateTime",
+            "sourceColumn": "date",
+            "summarizeBy": "none",
+            "lineageTag": "ede4f379-0a0e-57d1-956a-257b4974e912",
+            "formatString": "dd/MM/yyyy"
+          },
+          {
+            "name": "store_nbr",
+            "dataType": "int64",
+            "sourceColumn": "store_nbr",
+            "summarizeBy": "none",
+            "lineageTag": "a2805eb4-07bc-55db-b1e5-93b41bc86f5d"
+          },
+          {
+            "name": "family",
+            "dataType": "string",
+            "sourceColumn": "family",
+            "summarizeBy": "none",
+            "lineageTag": "1393d28d-40af-585c-a16f-abd6c63f051c"
+          },
+          {
+            "name": "sales",
+            "dataType": "double",
+            "sourceColumn": "sales",
+            "summarizeBy": "none",
+            "lineageTag": "084d6391-fae0-54d8-ae43-9711c65afd7d"
+          },
+          {
+            "name": "onpromotion",
+            "dataType": "int64",
+            "sourceColumn": "onpromotion",
+            "summarizeBy": "none",
+            "lineageTag": "4ab18c46-91a4-5747-99df-6b270c8a781b"
+          },
+          {
+            "name": "is_holiday",
+            "dataType": "int64",
+            "sourceColumn": "is_holiday",
+            "summarizeBy": "none",
+            "lineageTag": "ce53c58f-e76c-52d6-9820-a24cd91ae3b7"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Historico",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Archivo = if UseLocalFiles then File.Contents(LocalDataFolder & \"/historico.csv\") else Web.Contents(DataBaseURL, [RelativePath=\"historico.csv\"]),",
+                "    Fuente = Csv.Document(Archivo, [Delimiter=\",\", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),",
+                "    Cabeceras = Table.PromoteHeaders(Fuente, [PromoteAllScalars=true]),",
+                "    Tipos = Table.TransformColumnTypes(Cabeceras, {{\"date\", type date}, {\"store_nbr\", Int64.Type}, {\"family\", type text}, {\"sales\", type number}, {\"onpromotion\", Int64.Type}, {\"is_holiday\", Int64.Type}}, \"en-US\")",
+                "in",
+                "    Tipos"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "Predicciones",
+        "columns": [
+          {
+            "name": "date",
+            "dataType": "dateTime",
+            "sourceColumn": "date",
+            "summarizeBy": "none",
+            "lineageTag": "b70d17ac-34ba-5117-bd4f-9ecb5312bb5d",
+            "formatString": "dd/MM/yyyy"
+          },
+          {
+            "name": "store_nbr",
+            "dataType": "int64",
+            "sourceColumn": "store_nbr",
+            "summarizeBy": "none",
+            "lineageTag": "a744221e-5d79-59b3-91b1-2df8279cc325"
+          },
+          {
+            "name": "family",
+            "dataType": "string",
+            "sourceColumn": "family",
+            "summarizeBy": "none",
+            "lineageTag": "46e18ee8-be05-5863-b893-ffa010a459b1"
+          },
+          {
+            "name": "cutoff",
+            "dataType": "dateTime",
+            "sourceColumn": "cutoff",
+            "summarizeBy": "none",
+            "lineageTag": "ef63e140-4665-51c4-8c95-12d7c87ab24f",
+            "formatString": "dd/MM/yyyy"
+          },
+          {
+            "name": "horizon_day",
+            "dataType": "int64",
+            "sourceColumn": "horizon_day",
+            "summarizeBy": "none",
+            "lineageTag": "21e00abc-5303-5f8a-a395-176977760fd8"
+          },
+          {
+            "name": "model",
+            "dataType": "string",
+            "sourceColumn": "model",
+            "summarizeBy": "none",
+            "lineageTag": "6edcfac1-b439-5b5d-99c7-8f11f9675f8c"
+          },
+          {
+            "name": "predicted_sales",
+            "dataType": "double",
+            "sourceColumn": "predicted_sales",
+            "summarizeBy": "none",
+            "lineageTag": "58ed313a-3b66-538f-ae03-b61c44806b7b"
+          },
+          {
+            "name": "id",
+            "dataType": "int64",
+            "sourceColumn": "id",
+            "summarizeBy": "none",
+            "lineageTag": "268e95ac-d551-5405-9750-395eb0845f7a"
+          },
+          {
+            "name": "onpromotion",
+            "dataType": "int64",
+            "sourceColumn": "onpromotion",
+            "summarizeBy": "none",
+            "lineageTag": "c5c8d732-cf95-55d8-8184-2613cfd4a57f"
+          },
+          {
+            "name": "is_selected",
+            "dataType": "int64",
+            "sourceColumn": "is_selected",
+            "summarizeBy": "none",
+            "lineageTag": "c84d9c98-99c4-5e91-ba1b-95df29fc2423"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Predicciones",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Archivo = if UseLocalFiles then File.Contents(LocalDataFolder & \"/predicciones.csv\") else Web.Contents(DataBaseURL, [RelativePath=\"predicciones.csv\"]),",
+                "    Fuente = Csv.Document(Archivo, [Delimiter=\",\", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),",
+                "    Cabeceras = Table.PromoteHeaders(Fuente, [PromoteAllScalars=true]),",
+                "    Tipos = Table.TransformColumnTypes(Cabeceras, {{\"date\", type date}, {\"store_nbr\", Int64.Type}, {\"family\", type text}, {\"cutoff\", type date}, {\"horizon_day\", Int64.Type}, {\"model\", type text}, {\"predicted_sales\", type number}, {\"id\", Int64.Type}, {\"onpromotion\", Int64.Type}, {\"is_selected\", Int64.Type}}, \"en-US\")",
+                "in",
+                "    Tipos"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "Validacion",
+        "columns": [
+          {
+            "name": "date",
+            "dataType": "dateTime",
+            "sourceColumn": "date",
+            "summarizeBy": "none",
+            "lineageTag": "7106004a-b77e-5f66-9faf-e75f4871e8e5",
+            "formatString": "dd/MM/yyyy"
+          },
+          {
+            "name": "store_nbr",
+            "dataType": "int64",
+            "sourceColumn": "store_nbr",
+            "summarizeBy": "none",
+            "lineageTag": "b0301ee9-547a-50dd-937d-0db90fad2fea"
+          },
+          {
+            "name": "family",
+            "dataType": "string",
+            "sourceColumn": "family",
+            "summarizeBy": "none",
+            "lineageTag": "f65dfe24-09ff-5a0f-a2cb-1d4ea03c7559"
+          },
+          {
+            "name": "cutoff",
+            "dataType": "dateTime",
+            "sourceColumn": "cutoff",
+            "summarizeBy": "none",
+            "lineageTag": "0d78697c-16be-5d7b-878c-1a54754d10f6",
+            "formatString": "dd/MM/yyyy"
+          },
+          {
+            "name": "horizon_day",
+            "dataType": "int64",
+            "sourceColumn": "horizon_day",
+            "summarizeBy": "none",
+            "lineageTag": "a226b478-0351-521d-b893-a721977728ba"
+          },
+          {
+            "name": "model",
+            "dataType": "string",
+            "sourceColumn": "model",
+            "summarizeBy": "none",
+            "lineageTag": "4db31076-62a1-5253-8c0d-16ac46812f45"
+          },
+          {
+            "name": "role",
+            "dataType": "string",
+            "sourceColumn": "role",
+            "summarizeBy": "none",
+            "lineageTag": "45494bf6-0892-56d0-8bc6-86e276fe48c0"
+          },
+          {
+            "name": "prediction",
+            "dataType": "double",
+            "sourceColumn": "prediction",
+            "summarizeBy": "none",
+            "lineageTag": "d37605e0-4c92-5ca3-8ad3-d1a8b4e32697"
+          },
+          {
+            "name": "sales",
+            "dataType": "double",
+            "sourceColumn": "sales",
+            "summarizeBy": "none",
+            "lineageTag": "f887c618-0cf2-5634-a70d-c4898cd29e56"
+          },
+          {
+            "name": "onpromotion",
+            "dataType": "int64",
+            "sourceColumn": "onpromotion",
+            "summarizeBy": "none",
+            "lineageTag": "b0dc1b19-c199-5bf1-b768-4887f2d756bf"
+          },
+          {
+            "name": "absolute_error",
+            "dataType": "double",
+            "sourceColumn": "absolute_error",
+            "summarizeBy": "none",
+            "lineageTag": "fba5caef-69f9-52e4-8a99-141f156b9d78"
+          },
+          {
+            "name": "squared_error",
+            "dataType": "double",
+            "sourceColumn": "squared_error",
+            "summarizeBy": "none",
+            "lineageTag": "e05382d4-9a5d-5cc1-99ad-ba676ea5f94b"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Validacion",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Archivo = if UseLocalFiles then File.Contents(LocalDataFolder & \"/validacion.csv\") else Web.Contents(DataBaseURL, [RelativePath=\"validacion.csv\"]),",
+                "    Fuente = Csv.Document(Archivo, [Delimiter=\",\", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),",
+                "    Cabeceras = Table.PromoteHeaders(Fuente, [PromoteAllScalars=true]),",
+                "    Tipos = Table.TransformColumnTypes(Cabeceras, {{\"date\", type date}, {\"store_nbr\", Int64.Type}, {\"family\", type text}, {\"cutoff\", type date}, {\"horizon_day\", Int64.Type}, {\"model\", type text}, {\"role\", type text}, {\"prediction\", type number}, {\"sales\", type number}, {\"onpromotion\", Int64.Type}, {\"absolute_error\", type number}, {\"squared_error\", type number}}, \"en-US\")",
+                "in",
+                "    Tipos"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "Tiendas",
+        "columns": [
+          {
+            "name": "store_nbr",
+            "dataType": "int64",
+            "sourceColumn": "store_nbr",
+            "summarizeBy": "none",
+            "lineageTag": "b360f0a2-d468-5e0e-ae75-30ef151014ef"
+          },
+          {
+            "name": "city",
+            "dataType": "string",
+            "sourceColumn": "city",
+            "summarizeBy": "none",
+            "lineageTag": "12add4dc-c838-5d4e-bfdb-8b1b873ee0cb"
+          },
+          {
+            "name": "state",
+            "dataType": "string",
+            "sourceColumn": "state",
+            "summarizeBy": "none",
+            "lineageTag": "28f6d9df-8eaa-5d39-bc52-5e210e8eb457"
+          },
+          {
+            "name": "store_type",
+            "dataType": "string",
+            "sourceColumn": "store_type",
+            "summarizeBy": "none",
+            "lineageTag": "20169594-0a23-59b1-a249-7d4e4e8632ac"
+          },
+          {
+            "name": "cluster",
+            "dataType": "int64",
+            "sourceColumn": "cluster",
+            "summarizeBy": "none",
+            "lineageTag": "8265d1a7-447f-5527-847b-5d540b39524c"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Tiendas",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Archivo = if UseLocalFiles then File.Contents(LocalDataFolder & \"/tiendas.csv\") else Web.Contents(DataBaseURL, [RelativePath=\"tiendas.csv\"]),",
+                "    Fuente = Csv.Document(Archivo, [Delimiter=\",\", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),",
+                "    Cabeceras = Table.PromoteHeaders(Fuente, [PromoteAllScalars=true]),",
+                "    Tipos = Table.TransformColumnTypes(Cabeceras, {{\"store_nbr\", Int64.Type}, {\"city\", type text}, {\"state\", type text}, {\"store_type\", type text}, {\"cluster\", Int64.Type}}, \"en-US\")",
+                "in",
+                "    Tipos"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "Familias",
+        "columns": [
+          {
+            "name": "family",
+            "dataType": "string",
+            "sourceColumn": "family",
+            "summarizeBy": "none",
+            "lineageTag": "6c10204c-c07e-53a0-99e6-d6f35f54d6ae"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Familias",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Archivo = if UseLocalFiles then File.Contents(LocalDataFolder & \"/familias.csv\") else Web.Contents(DataBaseURL, [RelativePath=\"familias.csv\"]),",
+                "    Fuente = Csv.Document(Archivo, [Delimiter=\",\", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),",
+                "    Cabeceras = Table.PromoteHeaders(Fuente, [PromoteAllScalars=true]),",
+                "    Tipos = Table.TransformColumnTypes(Cabeceras, {{\"family\", type text}}, \"en-US\")",
+                "in",
+                "    Tipos"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "Modelos",
+        "columns": [
+          {
+            "name": "model",
+            "dataType": "string",
+            "sourceColumn": "model",
+            "summarizeBy": "none",
+            "lineageTag": "80896604-0787-5eb8-bf8d-0c3d3018c7a5"
+          },
+          {
+            "name": "is_selected",
+            "dataType": "int64",
+            "sourceColumn": "is_selected",
+            "summarizeBy": "none",
+            "lineageTag": "e3db8f30-f3d4-5378-9586-3327c39e201b"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Modelos",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Archivo = if UseLocalFiles then File.Contents(LocalDataFolder & \"/modelos.csv\") else Web.Contents(DataBaseURL, [RelativePath=\"modelos.csv\"]),",
+                "    Fuente = Csv.Document(Archivo, [Delimiter=\",\", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),",
+                "    Cabeceras = Table.PromoteHeaders(Fuente, [PromoteAllScalars=true]),",
+                "    Tipos = Table.TransformColumnTypes(Cabeceras, {{\"model\", type text}, {\"is_selected\", Int64.Type}}, \"en-US\")",
+                "in",
+                "    Tipos"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "Calendario",
+        "columns": [
+          {
+            "name": "date",
+            "dataType": "dateTime",
+            "sourceColumn": "date",
+            "summarizeBy": "none",
+            "lineageTag": "a32d533c-2f27-5156-9d58-6c45d2e174f6",
+            "formatString": "dd/MM/yyyy",
+            "isKey": true
+          },
+          {
+            "name": "year",
+            "dataType": "int64",
+            "sourceColumn": "year",
+            "summarizeBy": "none",
+            "lineageTag": "dfbfb6b8-4370-577d-955a-05f1fa9ab166"
+          },
+          {
+            "name": "month",
+            "dataType": "int64",
+            "sourceColumn": "month",
+            "summarizeBy": "none",
+            "lineageTag": "478b98ea-a389-5301-b96d-687746b366b3"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Calendario",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Archivo = if UseLocalFiles then File.Contents(LocalDataFolder & \"/calendario.csv\") else Web.Contents(DataBaseURL, [RelativePath=\"calendario.csv\"]),",
+                "    Fuente = Csv.Document(Archivo, [Delimiter=\",\", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),",
+                "    Cabeceras = Table.PromoteHeaders(Fuente, [PromoteAllScalars=true]),",
+                "    Tipos = Table.TransformColumnTypes(Cabeceras, {{\"date\", type date}, {\"year\", Int64.Type}, {\"month\", Int64.Type}}, \"en-US\")",
+                "in",
+                "    Tipos"
+              ]
+            }
+          }
+        ],
+        "dataCategory": "Time"
+      },
+      {
+        "name": "Medidas",
+        "columns": [
+          {
+            "name": "dummy",
+            "dataType": "int64",
+            "sourceColumn": "dummy",
+            "isHidden": true
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Medidas",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "#table(type table [dummy = Int64.Type], {{0}})"
+              ]
+            }
+          }
+        ],
+        "measures": [
+          {
+            "name": "Ventas historicas",
+            "expression": "SUM(Historico[sales])",
+            "formatString": "#,0.0"
+          },
+          {
+            "name": "Ventas previstas",
+            "expression": "VAR Modelo = SELECTEDVALUE(Modelos[model], \"lightgbm\") RETURN CALCULATE(SUM(Predicciones[predicted_sales]), Modelos[model] = Modelo)",
+            "formatString": "#,0.0"
+          },
+          {
+            "name": "Promociones previstas",
+            "expression": "VAR Modelo = SELECTEDVALUE(Modelos[model], \"lightgbm\") RETURN CALCULATE(SUM(Predicciones[onpromotion]), Modelos[model] = Modelo)",
+            "formatString": "#,0"
+          },
+          {
+            "name": "Dia horizonte",
+            "expression": "MAX(Predicciones[horizon_day])",
+            "formatString": "0"
+          },
+          {
+            "name": "MAE",
+            "expression": "VAR Modelo = SELECTEDVALUE(Modelos[model], \"lightgbm\") RETURN CALCULATE(AVERAGE(Validacion[absolute_error]), REMOVEFILTERS(Calendario), Modelos[model] = Modelo)",
+            "formatString": "0.00"
+          },
+          {
+            "name": "RMSE",
+            "expression": "VAR Modelo = SELECTEDVALUE(Modelos[model], \"lightgbm\") RETURN CALCULATE(SQRT(AVERAGE(Validacion[squared_error])), REMOVEFILTERS(Calendario), Modelos[model] = Modelo)",
+            "formatString": "0.00"
+          },
+          {
+            "name": "WAPE",
+            "expression": "VAR Modelo = SELECTEDVALUE(Modelos[model], \"lightgbm\") RETURN CALCULATE(DIVIDE(SUM(Validacion[absolute_error]), SUM(Validacion[sales])), REMOVEFILTERS(Calendario), Modelos[model] = Modelo)",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "Sesgo",
+            "expression": "VAR Modelo = SELECTEDVALUE(Modelos[model], \"lightgbm\") RETURN CALCULATE(DIVIDE(SUM(Validacion[prediction]) - SUM(Validacion[sales]), SUM(Validacion[sales])), REMOVEFILTERS(Calendario), Modelos[model] = Modelo)",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "MAE baseline",
+            "expression": "CALCULATE([MAE], REMOVEFILTERS(Modelos), Modelos[model] = \"baseline_semanal\")",
+            "formatString": "0.00"
+          },
+          {
+            "name": "Mejora MAE",
+            "expression": "DIVIDE([MAE baseline] - [MAE], [MAE baseline])",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "Ventas reales test",
+            "expression": "VAR Modelo = SELECTEDVALUE(Modelos[model], \"lightgbm\") RETURN CALCULATE(SUM(Validacion[sales]), REMOVEFILTERS(Calendario), Modelos[model] = Modelo)",
+            "formatString": "#,0.0"
+          },
+          {
+            "name": "Ventas previstas test",
+            "expression": "VAR Modelo = SELECTEDVALUE(Modelos[model], \"lightgbm\") RETURN CALCULATE(SUM(Validacion[prediction]), REMOVEFILTERS(Calendario), Modelos[model] = Modelo)",
+            "formatString": "#,0.0"
+          },
+          {
+            "name": "Modelo mostrado",
+            "expression": "SELECTEDVALUE(Modelos[model], \"lightgbm\")"
+          },
+          {
+            "name": "Aviso historico",
+            "expression": "\"Demostración histórica. Datos hasta agosto de 2017. Previsión del 16 al 31 de agosto de 2017.\""
+          },
+          {
+            "name": "Aviso validacion",
+            "expression": "\"Test interno independiente: 31/07/2017 a 15/08/2017. Las métricas conservan los filtros de tienda, familia y modelo.\""
+          },
+          {
+            "name": "Aviso uso",
+            "expression": "\"Ventas registradas previstas. Sin stock, precios ni costes, la previsión requiere revisión y no es una orden de compra.\""
+          },
+          {
+            "name": "Estado datos",
+            "expression": "IF(ISBLANK([Ventas previstas]), \"Sin predicciones para la selección\", \"Previsión disponible\")"
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "name": "e7b92766-aaa0-57a3-abf7-9ca0ee6a5c96",
+        "fromTable": "Historico",
+        "fromColumn": "date",
+        "fromCardinality": "many",
+        "toTable": "Calendario",
+        "toColumn": "date",
+        "toCardinality": "one",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "a983e981-b3fb-5a45-9570-df9c1b26513e",
+        "fromTable": "Historico",
+        "fromColumn": "store_nbr",
+        "fromCardinality": "many",
+        "toTable": "Tiendas",
+        "toColumn": "store_nbr",
+        "toCardinality": "one",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "a519b2a8-1785-567d-8b59-d1ecac05d55e",
+        "fromTable": "Historico",
+        "fromColumn": "family",
+        "fromCardinality": "many",
+        "toTable": "Familias",
+        "toColumn": "family",
+        "toCardinality": "one",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "b4952120-fcba-5692-9384-a0c3ffa8e197",
+        "fromTable": "Predicciones",
+        "fromColumn": "date",
+        "fromCardinality": "many",
+        "toTable": "Calendario",
+        "toColumn": "date",
+        "toCardinality": "one",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "324a9234-e830-58e1-8342-b254a27ff233",
+        "fromTable": "Predicciones",
+        "fromColumn": "store_nbr",
+        "fromCardinality": "many",
+        "toTable": "Tiendas",
+        "toColumn": "store_nbr",
+        "toCardinality": "one",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "9a4062f7-3425-5792-abab-b4cd50143676",
+        "fromTable": "Predicciones",
+        "fromColumn": "family",
+        "fromCardinality": "many",
+        "toTable": "Familias",
+        "toColumn": "family",
+        "toCardinality": "one",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "5d1dc776-6a2c-5357-9c6d-d208d954c542",
+        "fromTable": "Predicciones",
+        "fromColumn": "model",
+        "fromCardinality": "many",
+        "toTable": "Modelos",
+        "toColumn": "model",
+        "toCardinality": "one",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "e46c4e9c-910c-5f6b-9641-186e182326e4",
+        "fromTable": "Validacion",
+        "fromColumn": "date",
+        "fromCardinality": "many",
+        "toTable": "Calendario",
+        "toColumn": "date",
+        "toCardinality": "one",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "ad9e83b6-4dba-5811-b766-f455582cbb15",
+        "fromTable": "Validacion",
+        "fromColumn": "store_nbr",
+        "fromCardinality": "many",
+        "toTable": "Tiendas",
+        "toColumn": "store_nbr",
+        "toCardinality": "one",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "525e9826-2b26-5fc9-85dd-f358e365777c",
+        "fromTable": "Validacion",
+        "fromColumn": "family",
+        "fromCardinality": "many",
+        "toTable": "Familias",
+        "toColumn": "family",
+        "toCardinality": "one",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "69a1c58b-fc48-58d3-a048-2addd4f09a16",
+        "fromTable": "Validacion",
+        "fromColumn": "model",
+        "fromCardinality": "many",
+        "toTable": "Modelos",
+        "toColumn": "model",
+        "toCardinality": "one",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      }
+    ],
+    "expressions": [
+      {
+        "name": "DataBaseURL",
+        "kind": "m",
+        "expression": [
+          "\"https://raw.githubusercontent.com/adeltoutouh-lab/prediccion-demanda-favorita/main/powerbi/data/\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+        ]
+      },
+      {
+        "name": "UseLocalFiles",
+        "kind": "m",
+        "expression": [
+          "false meta [IsParameterQuery=true, Type=\"Logical\", IsParameterQueryRequired=true]"
+        ]
+      },
+      {
+        "name": "LocalDataFolder",
+        "kind": "m",
+        "expression": [
+          "\"C:/TFM/prediccion-demanda-favorita/powerbi/data\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+        ]
+      }
+    ],
+    "annotations": [
+      {
+        "name": "PBI_QueryOrder",
+        "value": "[\"Historico\", \"Predicciones\", \"Validacion\", \"Tiendas\", \"Familias\", \"Modelos\", \"Calendario\"]"
+      },
+      {
+        "name": "__PBI_TimeIntelligenceEnabled",
+        "value": "0"
+      }
+    ]
+  }
+}

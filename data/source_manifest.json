@@ -1,0 +1,42 @@
+{
+  "official_source": "https://www.kaggle.com/competitions/store-sales-time-series-forecasting/data",
+  "download_source": "https://raw.githubusercontent.com/njer1nj0r0ge236/TimeSeries-Forecasting-Regression-Analysis/52b53a97fca77910f7ec1bf5cc58c4a334507c77/store-sales-time-series-forecasting%20DATASETS.zip",
+  "archive_sha256": "12e9c1dc4833cc804b3ff1515bd7b688f45fd8216fb2b340525036b006d625be",
+  "files": [
+    {
+      "name": "holidays_events.csv",
+      "bytes": 22309,
+      "sha256": "81a183d6c4d691b57f84a0fde6bbf734a5b3c36a74b97378bf33a592648e2999"
+    },
+    {
+      "name": "oil.csv",
+      "bytes": 20580,
+      "sha256": "944b23b857580f9d804399346fd3ed69bffcb7facfd98c55fdb408b8d057cca7"
+    },
+    {
+      "name": "sample_submission.csv",
+      "bytes": 342153,
+      "sha256": "17505ec561d9bc64a3c10c3eb00474becf162d9053cebf014a58a6c82ed530c4"
+    },
+    {
+      "name": "stores.csv",
+      "bytes": 1387,
+      "sha256": "af503b2bce11d7906d249f81cc0598f10e2addcc9f6c59aa2d95c9f2652c296b"
+    },
+    {
+      "name": "test.csv",
+      "bytes": 1022269,
+      "sha256": "087ec1ecec76dbba9ea2adb48b8b2fd527c7c59adb82b0dfb9f6f82739400d26"
+    },
+    {
+      "name": "train.csv",
+      "bytes": 121800373,
+      "sha256": "99a1b7f4241821df10fa71f23abdd71c634f71f901e3cab1400c0f0c583f862c"
+    },
+    {
+      "name": "transactions.csv",
+      "bytes": 1552637,
+      "sha256": "e116384a6981af74932832436aa2f6a43121f77ca81accc44e3a5160158ca03c"
+    }
+  ]
+}

@@ -1,0 +1,173 @@
+[
+  {
+    "cutoff": "2017-06-12",
+    "model": "baseline_semanal",
+    "train_start": "2015-06-14",
+    "train_end": "2017-06-12",
+    "train_rows": 1297296,
+    "fit_seconds": 4.076000095665222e-06,
+    "forecast_seconds": 0.002529846000015823
+  },
+  {
+    "cutoff": "2017-06-12",
+    "model": "ridge",
+    "train_start": "2015-06-14",
+    "train_end": "2017-06-12",
+    "train_rows": 1297296,
+    "fit_seconds": 4.846494739000036,
+    "forecast_seconds": 0.050912513999946896
+  },
+  {
+    "cutoff": "2017-06-12",
+    "model": "lightgbm_31",
+    "train_start": "2015-06-14",
+    "train_end": "2017-06-12",
+    "train_rows": 1297296,
+    "fit_seconds": 21.404109028999983,
+    "forecast_seconds": 0.12290059700001166
+  },
+  {
+    "cutoff": "2017-06-12",
+    "model": "lightgbm_63",
+    "train_start": "2015-06-14",
+    "train_end": "2017-06-12",
+    "train_rows": 1297296,
+    "fit_seconds": 32.760833768,
+    "forecast_seconds": 0.327739299999962
+  },
+  {
+    "cutoff": "2017-06-28",
+    "model": "baseline_semanal",
+    "train_start": "2015-06-30",
+    "train_end": "2017-06-28",
+    "train_rows": 1297296,
+    "fit_seconds": 3.2250000003841706e-06,
+    "forecast_seconds": 0.0026363530000708124
+  },
+  {
+    "cutoff": "2017-06-28",
+    "model": "ridge",
+    "train_start": "2015-06-30",
+    "train_end": "2017-06-28",
+    "train_rows": 1297296,
+    "fit_seconds": 5.042443888999969,
+    "forecast_seconds": 0.0517514640000627
+  },
+  {
+    "cutoff": "2017-06-28",
+    "model": "lightgbm_31",
+    "train_start": "2015-06-30",
+    "train_end": "2017-06-28",
+    "train_rows": 1297296,
+    "fit_seconds": 21.69791383900008,
+    "forecast_seconds": 0.11776376499994967
+  },
+  {
+    "cutoff": "2017-06-28",
+    "model": "lightgbm_63",
+    "train_start": "2015-06-30",
+    "train_end": "2017-06-28",
+    "train_rows": 1297296,
+    "fit_seconds": 31.64443027699997,
+    "forecast_seconds": 0.24101025600009507
+  },
+  {
+    "cutoff": "2017-07-14",
+    "model": "baseline_semanal",
+    "train_start": "2015-07-16",
+    "train_end": "2017-07-14",
+    "train_rows": 1297296,
+    "fit_seconds": 3.6050000744580757e-06,
+    "forecast_seconds": 0.0028426179999314627
+  },
+  {
+    "cutoff": "2017-07-14",
+    "model": "ridge",
+    "train_start": "2015-07-16",
+    "train_end": "2017-07-14",
+    "train_rows": 1297296,
+    "fit_seconds": 4.974097297999947,
+    "forecast_seconds": 0.0532831850000548
+  },
+  {
+    "cutoff": "2017-07-14",
+    "model": "lightgbm_31",
+    "train_start": "2015-07-16",
+    "train_end": "2017-07-14",
+    "train_rows": 1297296,
+    "fit_seconds": 21.06845372800001,
+    "forecast_seconds": 0.10738955499994063
+  },
+  {
+    "cutoff": "2017-07-14",
+    "model": "lightgbm_63",
+    "train_start": "2015-07-16",
+    "train_end": "2017-07-14",
+    "train_rows": 1297296,
+    "fit_seconds": 31.545428008000044,
+    "forecast_seconds": 0.2570774689999098
+  },
+  {
+    "cutoff": "2017-07-30",
+    "model": "baseline_semanal",
+    "train_start": "2015-08-01",
+    "train_end": "2017-07-30",
+    "train_rows": 1297296,
+    "fit_seconds": 3.4650000770852785e-06,
+    "forecast_seconds": 0.0026260279998950864
+  },
+  {
+    "cutoff": "2017-07-30",
+    "model": "ridge",
+    "train_start": "2015-08-01",
+    "train_end": "2017-07-30",
+    "train_rows": 1297296,
+    "fit_seconds": 5.072625803000051,
+    "forecast_seconds": 0.059146798000028866
+  },
+  {
+    "cutoff": "2017-07-30",
+    "model": "lightgbm_31",
+    "train_start": "2015-08-01",
+    "train_end": "2017-07-30",
+    "train_rows": 1297296,
+    "fit_seconds": 21.988523863999944,
+    "forecast_seconds": 0.13077215700002398
+  },
+  {
+    "cutoff": "2017-07-30",
+    "model": "lightgbm_63",
+    "train_start": "2015-08-01",
+    "train_end": "2017-07-30",
+    "train_rows": 1297296,
+    "fit_seconds": 31.634979294999994,
+    "forecast_seconds": 0.281738077
+  },
+  {
+    "cutoff": "2017-08-15",
+    "model": "baseline_semanal",
+    "train_start": "2015-08-17",
+    "train_end": "2017-08-15",
+    "train_rows": 1297296,
+    "fit_seconds": 3.375000005689799e-06,
+    "forecast_seconds": 0.027263616999903206
+  },
+  {
+    "cutoff": "2017-08-15",
+    "model": "ridge",
+    "train_start": "2015-08-17",
+    "train_end": "2017-08-15",
+    "train_rows": 1297296,
+    "fit_seconds": 5.103102336000006,
+    "forecast_seconds": 0.07987787699994442
+  },
+  {
+    "cutoff": "2017-08-15",
+    "model": "lightgbm_63",
+    "train_start": "2015-08-17",
+    "train_end": "2017-08-15",
+    "train_rows": 1297296,
+    "fit_seconds": 31.72502766399998,
+    "forecast_seconds": 0.24901211700000658
+  }
+]

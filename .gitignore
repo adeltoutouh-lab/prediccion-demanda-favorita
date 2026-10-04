@@ -3,6 +3,21 @@
 *.parquet
 *.zip
 
+# Resultados pequeños y datos del informe que sí se entregan
+!outputs/*.csv
+!outputs/eda/*.csv
+!powerbi/data/*.csv
+
+# Modelos se regeneran; no cargar pickles descargados de terceros
+models/
+outputs/backtest_predictions.parquet
+outputs/forecast.parquet
+outputs/*.log
+powerbi/**/.pbi/
+tmp/
+*.log
+.pytest_cache/
+
 # Carpetas locales de datos
 data/raw/
 data/processed/

@@ -1,0 +1,77 @@
+{
+  "executed_utc": "2026-10-04T18:16:20.769401+00:00",
+  "python": "3.12.14",
+  "packages": {
+    "pandas": "2.2.3",
+    "numpy": "2.3.5",
+    "scikit-learn": "1.8.0",
+    "lightgbm": "4.6.0",
+    "pyarrow": "20.0.0",
+    "scipy": "1.17.0"
+  },
+  "config": {
+    "horizon": 16,
+    "train_window_days": 730,
+    "validation_cutoffs": [
+      "2017-06-12",
+      "2017-06-28",
+      "2017-07-14"
+    ],
+    "holdout_cutoff": "2017-07-30",
+    "ridge_alpha": 30.0,
+    "lightgbm_candidates": {
+      "lightgbm_31": {
+        "num_leaves": 31,
+        "n_estimators": 300
+      },
+      "lightgbm_63": {
+        "num_leaves": 63,
+        "n_estimators": 400
+      }
+    },
+    "learning_rate": 0.05,
+    "min_child_samples": 120,
+    "n_jobs": 4,
+    "random_state": 42,
+    "minimum_mae_improvement": 0.05
+  },
+  "features": [
+    "store_nbr",
+    "family_code",
+    "series_code",
+    "city_code",
+    "state_code",
+    "type_code",
+    "cluster",
+    "day_of_week",
+    "month",
+    "day_index",
+    "year_sin",
+    "year_cos",
+    "is_payday",
+    "is_holiday",
+    "is_event",
+    "is_work_day",
+    "promotion_log",
+    "is_promotion",
+    "lag_1",
+    "lag_7",
+    "lag_14",
+    "lag_28",
+    "mean_7",
+    "mean_28",
+    "std_28",
+    "weekday_mean_4",
+    "missing_lags"
+  ],
+  "selected_candidate": "lightgbm_63",
+  "lightgbm_dashboard_candidate": "lightgbm_63",
+  "raw_rows": 3000888,
+  "series": 1782,
+  "horizon": 16,
+  "submission_rows": 28512,
+  "elapsed_seconds": 294.658901487,
+  "forecast_semantics": "ventas hist\u00f3ricas previstas, no demanda ni previsi\u00f3n actual",
+  "future_transactions_used": false,
+  "future_oil_used": false
+}

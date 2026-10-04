@@ -1,0 +1,37 @@
+[
+  {
+    "file": "train.csv",
+    "bytes": 121800373,
+    "sha256": "99a1b7f4241821df10fa71f23abdd71c634f71f901e3cab1400c0f0c583f862c"
+  },
+  {
+    "file": "test.csv",
+    "bytes": 1022269,
+    "sha256": "087ec1ecec76dbba9ea2adb48b8b2fd527c7c59adb82b0dfb9f6f82739400d26"
+  },
+  {
+    "file": "stores.csv",
+    "bytes": 1387,
+    "sha256": "af503b2bce11d7906d249f81cc0598f10e2addcc9f6c59aa2d95c9f2652c296b"
+  },
+  {
+    "file": "transactions.csv",
+    "bytes": 1552637,
+    "sha256": "e116384a6981af74932832436aa2f6a43121f77ca81accc44e3a5160158ca03c"
+  },
+  {
+    "file": "holidays_events.csv",
+    "bytes": 22309,
+    "sha256": "81a183d6c4d691b57f84a0fde6bbf734a5b3c36a74b97378bf33a592648e2999"
+  },
+  {
+    "file": "oil.csv",
+    "bytes": 20580,
+    "sha256": "944b23b857580f9d804399346fd3ed69bffcb7facfd98c55fdb408b8d057cca7"
+  },
+  {
+    "file": "sample_submission.csv",
+    "bytes": 342153,
+    "sha256": "17505ec561d9bc64a3c10c3eb00474becf162d9053cebf014a58a6c82ed530c4"
+  }
+]

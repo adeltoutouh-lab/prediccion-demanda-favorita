@@ -1,0 +1,4 @@
+model,is_selected
+baseline_semanal,0
+ridge,0
+lightgbm,1

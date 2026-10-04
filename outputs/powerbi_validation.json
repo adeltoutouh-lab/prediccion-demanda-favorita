@@ -1,0 +1,10 @@
+{
+  "schema_validation": true,
+  "field_references": 34,
+  "tables": 8,
+  "relationships": 11,
+  "visuals": 28,
+  "metric_reconciliation": true,
+  "validation_rows_per_model": 28512,
+  "desktop_opened": false
+}

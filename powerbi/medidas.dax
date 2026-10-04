@@ -1,0 +1,50 @@
+// Ventas historicas
+SUM(Historico[sales])
+
+// Ventas previstas
+VAR Modelo = SELECTEDVALUE(Modelos[model], "lightgbm") RETURN CALCULATE(SUM(Predicciones[predicted_sales]), Modelos[model] = Modelo)
+
+// Promociones previstas
+VAR Modelo = SELECTEDVALUE(Modelos[model], "lightgbm") RETURN CALCULATE(SUM(Predicciones[onpromotion]), Modelos[model] = Modelo)
+
+// Dia horizonte
+MAX(Predicciones[horizon_day])
+
+// MAE
+VAR Modelo = SELECTEDVALUE(Modelos[model], "lightgbm") RETURN CALCULATE(AVERAGE(Validacion[absolute_error]), REMOVEFILTERS(Calendario), Modelos[model] = Modelo)
+
+// RMSE
+VAR Modelo = SELECTEDVALUE(Modelos[model], "lightgbm") RETURN CALCULATE(SQRT(AVERAGE(Validacion[squared_error])), REMOVEFILTERS(Calendario), Modelos[model] = Modelo)
+
+// WAPE
+VAR Modelo = SELECTEDVALUE(Modelos[model], "lightgbm") RETURN CALCULATE(DIVIDE(SUM(Validacion[absolute_error]), SUM(Validacion[sales])), REMOVEFILTERS(Calendario), Modelos[model] = Modelo)
+
+// Sesgo
+VAR Modelo = SELECTEDVALUE(Modelos[model], "lightgbm") RETURN CALCULATE(DIVIDE(SUM(Validacion[prediction]) - SUM(Validacion[sales]), SUM(Validacion[sales])), REMOVEFILTERS(Calendario), Modelos[model] = Modelo)
+
+// MAE baseline
+CALCULATE([MAE], REMOVEFILTERS(Modelos), Modelos[model] = "baseline_semanal")
+
+// Mejora MAE
+DIVIDE([MAE baseline] - [MAE], [MAE baseline])
+
+// Ventas reales test
+VAR Modelo = SELECTEDVALUE(Modelos[model], "lightgbm") RETURN CALCULATE(SUM(Validacion[sales]), REMOVEFILTERS(Calendario), Modelos[model] = Modelo)
+
+// Ventas previstas test
+VAR Modelo = SELECTEDVALUE(Modelos[model], "lightgbm") RETURN CALCULATE(SUM(Validacion[prediction]), REMOVEFILTERS(Calendario), Modelos[model] = Modelo)
+
+// Modelo mostrado
+SELECTEDVALUE(Modelos[model], "lightgbm")
+
+// Aviso historico
+"Demostración histórica. Datos hasta agosto de 2017. Previsión del 16 al 31 de agosto de 2017."
+
+// Aviso validacion
+"Test interno independiente: 31/07/2017 a 15/08/2017. Las métricas conservan los filtros de tienda, familia y modelo."
+
+// Aviso uso
+"Ventas registradas previstas. Sin stock, precios ni costes, la previsión requiere revisión y no es una orden de compra."
+
+// Estado datos
+IF(ISBLANK([Ventas previstas]), "Sin predicciones para la selección", "Previsión disponible")
