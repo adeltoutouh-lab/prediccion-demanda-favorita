@@ -133,6 +133,12 @@ def visual(page, name, kind, rect, roles=None, title=None, objects=None, sync=No
         obj["visual"]["query"] = {"queryState": {role: {"projections": values} for role, values in roles.items()}}
     if title:
         obj["visual"]["visualContainerObjects"] = {"title": [{"properties": {"show": literal("true"), "text": literal("'" + title + "'"), "fontSize": literal("13D")}}]}
+    if kind == "card":
+        # El título ya identifica la medida. La etiqueta de categoría duplicada
+        # y el tamaño automático de 45 pt no caben en las tarjetas pequeñas.
+        objects = {"labels": [{"properties": {"fontSize": literal("34D")}}],
+                   "categoryLabels": [{"properties": {"show": literal("false")}}],
+                   **(objects or {})}
     if objects:
         obj["visual"]["objects"] = objects
     if sync:
@@ -149,7 +155,8 @@ def slicers(page):
     for name, table, column, title, y in [("tienda", "Tiendas", "store_nbr", "Tienda", 140),
                                         ("familia", "Familias", "family", "Familia", 260),
                                         ("modelo", "Modelos", "model", "Modelo", 380)]:
-        objects = {"data": [{"properties": {"mode": literal("'Dropdown'")}}]}
+        objects = {"data": [{"properties": {"mode": literal("'Dropdown'")}}],
+                   "header": [{"properties": {"show": literal("false")}}]}
         if name == "modelo":
             objects["selection"] = [{"properties": {"singleSelect": literal("true")}}]
         visual(page, page + "_" + name, "slicer", (24, y, 215, 100),
@@ -184,9 +191,11 @@ def build_report():
            {"Values": [projection("Predicciones", "date"), projection("Medidas", "Dia horizonte", True), projection("Medidas", "Ventas previstas", True), projection("Medidas", "Promociones previstas", True)]},
            "Detalle diario · menú (...) para exportar CSV")
     visual("forecast", "forecast_modelo_mostrado", "card", (24, 510, 215, 80),
-           {"Values": [projection("Medidas", "Modelo mostrado", True)]}, "Modelo mostrado")
+           {"Values": [projection("Medidas", "Modelo mostrado", True)]}, "Modelo mostrado",
+           objects={"labels": [{"properties": {"fontSize": literal("18D")}}]})
     visual("forecast", "forecast_estado", "card", (24, 610, 215, 95),
-           {"Values": [projection("Medidas", "Estado datos", True)]}, "Estado de la previsión")
+           {"Values": [projection("Medidas", "Estado datos", True)]}, "Estado de la previsión",
+           objects={"labels": [{"properties": {"fontSize": literal("12D")}}]})
     visual("forecast", "forecast_horizonte", "lineChart", (1020, 570, 385, 175),
            {"Category": [projection("Validacion", "horizon_day")], "Y": [projection("Medidas", "MAE", True)]}, "MAE por día del horizonte")
     textbox("forecast", "forecast_limite", "La previsión necesita revisión. El dataset no contiene stock ni demanda insatisfecha.", (24, 755, 1380, 32), 12)

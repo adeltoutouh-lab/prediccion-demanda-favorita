@@ -37,3 +37,7 @@ python scripts/validate_powerbi.py --schemas /ruta/json-schemas
 ```
 
 Sin `--schemas` el validador comprueba datos y referencias, pero no declara haber validado los esquemas. [Documentación oficial de proyectos PBIP](https://learn.microsoft.com/en-us/power-bi/developer/projects/projects-overview).
+
+## Apertura observada en el equipo del alumno
+
+El 04/10/2026 el alumno abrió el proyecto y aportó una captura de Power BI Desktop con las dos páginas y los datos cargados. En la página de previsión se observan MAE 75,85, WAPE 16,2% y mejora de MAE 21,4%, coherentes con los resultados de Python. La captura confirma la apertura y la visualización inicial; aún no confirma un refresco explícito, todos los filtros ni la exportación. Se han corregido los textos recortados de las tarjetas. Registro: [desktop_review.json](../outputs/desktop_review.json). Para la entrega cómoda al profesor, guardar un PBIX desde Desktop después de verificar la actualización.

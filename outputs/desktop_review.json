@@ -1,0 +1,16 @@
+{
+  "observed_at": "2026-10-04T21:02:12+02:00",
+  "evidence": "Captura de Power BI Desktop aportada por el alumno en la conversación",
+  "observed_commit": "0c31572e3024903ad90f29b909c517ecff777a57",
+  "project_opened": true,
+  "data_visible": true,
+  "visible_metrics": {
+    "mae": 75.85,
+    "wape_percent_rounded": 16.2,
+    "mae_improvement_percent_rounded": 21.4
+  },
+  "explicit_refresh_verified": false,
+  "filters_and_export_verified": false,
+  "pbix_created": false,
+  "layout_fix": "Se reducen los tamaños de las tarjetas de modelo y estado, se eliminan categorías duplicadas y cabeceras técnicas de los selectores. Pendiente confirmar la nueva maquetación en Desktop."
+}
